@@ -1,0 +1,15 @@
+---
+
+- hosts: dc
+  sudo: yes
+
+  tasks: 
+  - name: Install Apache Packages 
+    yum: name=httpd state=present
+
+  - name: Deploy Site Files
+    template: src=templates/info.j2 dest=/var/www/html/info.html
+    template: src=templates/jenkins.html dest=/var/www/html/jenkins.html
+
+  - name: Start the Apache Service 
+    service: name=httpd state=started 

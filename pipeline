@@ -1,0 +1,28 @@
+node {
+   
+  stage('Clean Repo') {
+        sh 'rm -rf *'
+        }
+  
+  stage('Checkout Repo') {
+    git 'https://github.com/amitvashist7/devops-tr-BS.git'
+  }
+    
+  stage('Build & Compile') {
+    sh "echo '<h1>Build_ID: ${env.BUILD_DISPLAY_NAME}</h1>' >> index.html"
+    sh 'cp -rf index.html  /root/ansible/templates/jenkins.html '
+    }
+  
+  stage('Clean Stage Env') {    
+    sh 'docker-compose stop'
+    sh 'docker-compose rm -f'
+	}   
+      
+  stage('Deploy to Stage') {    
+    sh 'docker-compose up -d --build'
+	}
+	
+   stage('Deploy on webservers via Ansible') {    
+    sh 'ansible-playbook -i /root/ansible/inventory /root/ansible/web.yaml'
+	}	
+} 
